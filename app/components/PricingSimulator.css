@@ -1,0 +1,525 @@
+/* =============================================
+   Pricing Simulator
+   font-size base: 62.5% (1rem = 10px)
+   ============================================= */
+
+.ps {
+  max-width: 640px;
+  margin: 0 auto 3rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Yu Gothic', YuGothic,
+    'Helvetica Neue', Arial, sans-serif;
+  color: #fff;
+}
+
+/* ── スクリーンリーダー専用 ── */
+.ps-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* =============================================
+   モード切替スイッチ
+   ============================================= */
+.ps-mode {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 2.4rem;
+}
+
+.ps-mode__btn {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 0.55rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: #fff;
+  transition: background 0.2s, box-shadow 0.2s;
+  line-height: 1.4;
+}
+
+.ps-mode__btn--active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* =============================================
+   セクション共通
+   ============================================= */
+.ps-section {
+  margin-bottom: 2rem;
+}
+
+.ps-section__label {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 0.8rem;
+}
+
+/* =============================================
+   制作種別
+   ============================================= */
+.ps-type {
+  display: flex;
+  gap: 1rem;
+}
+
+.ps-type__option {
+  flex: 1;
+  display: block;
+  padding: 1rem 1.5rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  user-select: none;
+}
+
+.ps-type__option--active {
+  border-color: #60a9ff;
+  color: #60a9ff;
+  background: rgba(96, 169, 255, 0.1);
+  font-weight: 600;
+}
+
+/* =============================================
+   項目リスト
+   =============================================
+   overflow: hidden を外し、ツールチップのクリップを防ぐ。
+   代わりに first-child / last-child で角丸を付与。
+   ============================================= */
+.ps-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+.ps-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 1rem;
+  position: relative;
+}
+
+.ps-item:first-child {
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.ps-item:last-child {
+  border-radius: 0 0 0.75rem 0.75rem;
+  border-bottom: none;
+}
+
+.ps-item__left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.ps-item__right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-shrink: 0;
+}
+
+.ps-item__name {
+  font-size: 1.45rem;
+  color: #fff;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.ps-item__price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #60a9ff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.ps-item__price--muted {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── ステッパー付き行 ── */
+.ps-item--stepper {
+  flex-wrap: wrap;
+  row-gap: 0.8rem;
+}
+
+/* ── オプション行 ── */
+.ps-item--opt {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ps-item--opt:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ps-item--checked {
+  background: rgba(96, 169, 255, 0.07);
+}
+
+.ps-item__check-label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+/* =============================================
+   カスタムチェックボックス
+   ============================================= */
+.ps-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.ps-checkbox__box {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ps-checkbox:checked + .ps-checkbox__box {
+  background: #60a9ff;
+  border-color: #60a9ff;
+}
+
+.ps-checkbox:checked + .ps-checkbox__box::after {
+  content: '';
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+  display: block;
+}
+
+.ps-checkbox:focus-visible + .ps-checkbox__box {
+  outline: 2px solid #60a9ff;
+  outline-offset: 2px;
+}
+
+/* =============================================
+   ステッパー
+   ============================================= */
+.ps-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ps-stepper__btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.ps-stepper__btn:hover {
+  border-color: #60a9ff;
+  background: rgba(96, 169, 255, 0.1);
+  color: #60a9ff;
+}
+
+.ps-stepper__input {
+  width: 44px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.ps-stepper__input::-webkit-outer-spin-button,
+.ps-stepper__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ps-stepper__input:focus {
+  border-color: #60a9ff;
+}
+
+.ps-stepper__unit {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-left: 2px;
+}
+
+/* =============================================
+   ツールチップ
+   overflow: hidden の親がないため、z-index で制御
+   ============================================= */
+.ps-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ps-info-icon {
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 2px;
+  border-radius: 50%;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.ps-info-icon:hover,
+.ps-info-icon:focus-visible {
+  opacity: 1;
+  color: #60a9ff;
+  outline: none;
+}
+
+.ps-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background: rgba(10, 20, 45, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+  padding: 0.7rem 1rem;
+  border-radius: 0.5rem;
+  width: max-content;
+  max-width: 220px;
+  white-space: normal;
+  z-index: 200;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  text-align: left;
+}
+
+.ps-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(10, 20, 45, 0.97);
+}
+
+/* =============================================
+   合計
+   ============================================= */
+.ps-total {
+  background: linear-gradient(
+    135deg,
+    rgba(96, 169, 255, 0.15),
+    rgba(209, 135, 255, 0.15)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 2.4rem 2.5rem;
+  text-align: center;
+  margin-bottom: 1.6rem;
+}
+
+.ps-total__label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 0.6rem;
+}
+
+.ps-total__amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.2rem;
+  line-height: 1;
+}
+
+.ps-total__currency {
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+.ps-total__number {
+  font-size: 5.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(-1deg, #60a9ff 10%, #d187ff 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Barlow', 'Montserrat', sans-serif;
+}
+
+.ps-total__tilde {
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: #fff;
+  align-self: flex-end;
+  padding-bottom: 0.4rem;
+}
+
+.ps-total__note {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+/* =============================================
+   お問い合わせボタン
+   ============================================= */
+.ps-action {
+  text-align: center;
+}
+
+.ps-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1.3rem 3.2rem;
+  background: linear-gradient(-1deg, #60a9ff 10%, #d187ff 90%);
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.ps-contact-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.ps-contact-btn:active {
+  transform: translateY(0);
+}
+
+.ps-contact-btn__icon {
+  flex-shrink: 0;
+}
+
+/* =============================================
+   レスポンシブ
+   ============================================= */
+@media screen and (max-width: 768px) {
+  .ps-mode__btn {
+    font-size: 1.2rem;
+    padding: 0.7rem 0.5rem;
+  }
+
+  .ps-item {
+    padding: 1rem 1.2rem;
+    gap: 0.8rem;
+  }
+
+  .ps-item__name {
+    font-size: 1.35rem;
+  }
+
+  .ps-item__price {
+    font-size: 1.35rem;
+  }
+
+  .ps-item--stepper .ps-item__left {
+    width: 100%;
+  }
+
+  .ps-item--stepper .ps-item__right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .ps-total__number {
+    font-size: 3.8rem;
+  }
+
+  .ps-tooltip {
+    max-width: 180px;
+    font-size: 1.15rem;
+  }
+
+  .ps-contact-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 1.5rem;
+    padding: 1.2rem 2rem;
+  }
+}
